@@ -1,0 +1,165 @@
+drop database if exists conferenceDB;
+create database conferenceDB;
+use conferenceDB;    
+    
+create table member(
+    id int not null primary key,
+    firstName varchar(60),
+    lastName varchar(60));
+    
+create table subCommittee(
+    name varchar(60) not null primary key,
+    chair int,
+    foreign key(chair) references member(id) on delete set null);
+    
+create table hasMember(
+    subCommittee varchar(60) not null,
+    memberId int not null,
+    primary key(subCommittee, memberId),
+	foreign key (subCommittee) references subCommittee(name) on delete cascade,
+	foreign key (memberId) references member(id) on delete cascade);
+   
+create table professional(
+    id int not null primary key,
+    rate int,
+    firstName varchar(60),
+    lastName varchar(60));
+
+create table room(
+    roomNumber int not null primary key,
+    numBeds int);
+    
+create table student(
+    id int not null primary key,
+    rate int,
+    firstName varchar(60),
+    lastName varchar(60),
+    roomNumber int,
+    foreign key (roomNumber) references room(roomNumber) on delete set null);
+
+create table company(
+    name varchar(60) not null primary key,
+    emailsSent int,
+    tier varchar(60));
+
+create table sponsor(
+    id int not null primary key,
+    rate int,
+    firstName varchar(60),
+    lastName varchar(60),
+    company varchar(60),
+    foreign key (company) references company(name) on delete cascade);
+
+create table jobAd(
+    name varchar(60) not null,
+    title varchar(60) not null,
+    payRate int,
+    city varchar(60),
+    province varchar(60),
+    primary key(name, title),
+    foreign key (name) references company(name) on delete cascade);
+   
+create table sessions(
+    location varchar(60) not null,
+    dateOfEvent date not null,
+    startTime time not null,
+    endTime time not null,
+    primary key(location, dateOfEvent, startTime));
+
+create table speaker(
+    id int not null primary key,
+    rate int,
+    firstName varchar(60),
+    lastName varchar(60),
+    location varchar(60) not null,
+    dateOfEvent date not null,
+    startTime time not null,
+    foreign key (location, dateOfEvent, startTime) references sessions(location, dateOfEvent, startTime) on delete cascade);
+    
+insert into member values(1, 'John', 'Doe');
+insert into member values(2, 'David', 'Smith');
+insert into member values(3, 'Connor', 'Wallace');
+insert into member values(4, 'Jim', 'Park');
+insert into member values(5, 'Ryan', 'Wang');
+insert into member values(6, 'Ben', 'Snedden');
+insert into member values(7, 'Chris', 'Walters');
+
+insert into subCommittee values('Finance', 1);
+insert into subCommittee values('Sponsorship', 2);
+insert into subCommittee values('Organization', 3);
+insert into subCommittee values('Diversity & Inclusion', 4);
+insert into subCommittee values('Research', 5);
+insert into subCommittee values('Operations', 6);
+insert into subCommittee values('Human Resources', 7);
+
+insert into hasMember values('Finance', 2);
+insert into hasMember values('Sponsorship', 3);
+insert into hasMember values('Organization', 4);
+insert into hasMember values('Diversity & Inclusion', 5);
+insert into hasMember values('Research', 6);
+insert into hasMember values('Operations', 7);
+insert into hasMember values('Human Resources', 1);
+
+insert into professional values(8, 100, 'Mark', 'Pollard');
+insert into professional values(9, 100, 'Nick', 'Chown');
+insert into professional values(10, 100, 'Isaiah', 'Dort');
+insert into professional values(11, 100, 'Mateo', 'Henriquez');
+insert into professional values(12, 100, 'Adam', 'Hassir');
+insert into professional values(13, 100, 'Zach', 'Kim');
+insert into professional values(14, 100, 'Luke', 'Bayles');
+
+insert into room values(1, 1);
+insert into room values(2, 2);
+insert into room values(3, 3);
+insert into room values(4, 1);
+insert into room values(5, 2);
+insert into room values(6, 3);
+insert into room values(7, 1);
+
+insert into student values(15, 50, 'Natalie', 'Biesel', 1);
+insert into student values(16, 50, 'Casey', 'Wolf', 2);
+insert into student values(17, 50, 'Claire', 'Percey', 3);
+insert into student values(18, 50, 'Jordan', 'Poll', 4);
+insert into student values(19, 50, 'Liam', 'Trudy', 5);
+insert into student values(20, 50, 'Eric', 'Gao', 6);
+insert into student values(21, 50, 'Jackson', 'Chan', 7);
+
+insert into company values('Apple', 4, 'Platinum');
+insert into company values('OpenAI', 3, 'Gold');
+insert into company values('Meta', 2, 'Silver');
+insert into company values('Shopify', 0, 'Bronze');
+insert into company values('Netflix', 4, 'Platinum');
+insert into company values('Amazon', 3, 'Gold');
+insert into company values('Accenture', 2, 'Silver');
+
+insert into sponsor values(22, 0, 'Emily', 'Belluz', 'Apple');
+insert into sponsor values(23, 0, 'Emma', 'Mira', 'OpenAI');
+insert into sponsor values(24, 0, 'Erica', 'Piccioni', 'Meta');
+insert into sponsor values(25, 0, 'Jenny', 'Jackson', 'Shopify');
+insert into sponsor values(26, 0, 'Hailey', 'Chung', 'Netflix');
+insert into sponsor values(27, 0, 'Halle', 'Stein', 'Amazon');
+insert into sponsor values(28, 0, 'John', 'Cho', 'Accenture');
+
+insert into jobAd values('Apple', 'Software Engineer', 170000, 'Toronto', 'Ontario');
+insert into jobAd values('OpenAI', 'Consultant', 100000, 'Waterloo', 'Ontario');
+insert into jobAd values('Meta', 'New Grad Business Analyst', 80000, 'Ottawa', 'Ontario');
+insert into jobAd values('Shopify', 'IT Manager', 70000, 'Vancouver', 'British Columbia');
+insert into jobAd values('Netflix', 'UI/UX Designer', 90000, 'Montreal', 'Quebec');
+insert into jobAd values('Amazon', 'Project Manager', 210000, 'Kingston', 'Ontario');
+insert into jobAd values('Accenture', 'Hardware Engineer', 160000, 'London', 'Ontario');
+
+insert into sessions values('Biosciences Complex', '2025-02-14', '09:00:00', '10:00:00');
+insert into sessions values('Biosciences Complex', '2025-02-14', '10:30:00', '11:30:00');
+insert into sessions values('Mitchell Hall', '2025-02-14', '13:00:00', '14:00:00');
+insert into sessions values('Mitchell Hall', '2025-02-14', '14:30:00', '15:30:00');
+insert into sessions values('Grant Hall', '2025-02-15', '09:00:00', '10:00:00');
+insert into sessions values('Grant Hall', '2025-02-15', '10:30:00', '11:30:00');
+insert into sessions values('Grant Hall', '2025-02-15', '13:00:00', '14:00:00');
+
+insert into speaker values(29, 0, 'Jeffrey', 'Percy', 'Biosciences Complex', '2025-02-14', '09:00:00');
+insert into speaker values(30, 0, 'Sam', 'Jackson', 'Biosciences Complex', '2025-02-14', '10:30:00');
+insert into speaker values(31, 0, 'Kendrick', 'Lamar', 'Mitchell Hall', '2025-02-14', '13:00:00');
+insert into speaker values(32, 0, 'Gracie', 'Abrams', 'Mitchell Hall', '2025-02-14', '14:30:00');
+insert into speaker values(33, 0, 'Justin', 'Beiber', 'Grant Hall', '2025-02-15', '09:00:00');
+insert into speaker values(34, 0, 'Benny', 'Blanco', 'Grant Hall', '2025-02-15', '10:30:00');
+insert into speaker values(35, 0, 'Selena', 'Gomez', 'Grant Hall', '2025-02-15', '13:00:00');
